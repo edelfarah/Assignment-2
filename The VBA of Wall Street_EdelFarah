@@ -1,0 +1,78 @@
+Sub StockTest():
+
+    Dim Ticker As String
+    Dim ws As Worksheet
+    Dim Vol As Double
+    Dim ClosePrice As Single
+    Dim OpenPrice As Single
+    Dim YearlyChange As Single
+    Dim Summary As Integer
+    Dim Total As Double
+    Total = 0
+    
+    For Each ws In Worksheets
+    
+    
+    
+    'Add Headers to Columns
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+    Summary = 2
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    For i = 2 To LastRow
+    
+    
+    
+    'Ticker
+     If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+    
+     Ticker = ws.Cells(i, 1).Value
+
+     
+    ws.Range("I" & Summary).Value = Ticker
+    
+    Total = Total + ws.Cells(i, 7).Value
+    ws.Range("L" & Summary).Value = Total
+    
+    Total = 0
+    Summary = Summary + 1
+    
+   Else
+        Total = Total + ws.Cells(i, 7).Value
+   End If
+    
+        
+       'Yearly Change
+       
+        If ws.Cells(i, 1).Value <> ws.Cells(i - 1, 1).Value And ws.Cells(i, 1).Value = ws.Cells(i + 1, 1).Value Then
+            OpenPrice = ws.Cells(i, 3).Value
+            
+       ElseIf ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value And ws.Cells(i, 1).Value = ws.Cells(i - 1, 1).Value And ws.Cells(i, 1) <> 0 Then
+           ClosePrice = ws.Cells(i, 6).Value
+           
+        ws.Range("J" & Summary - 1).Value = ClosePrice - OpenPrice
+        ws.Range("K" & Summary - 1).Value = (ClosePrice / OpenPrice) - 1
+        ws.Range("K" & Summary - 1).Style = "Percent" '
+        
+       
+        
+      If ws.Range("J" & Summary - 1).Value > 0 Then
+      ws.Range("J" & Summary - 1).Interior.ColorIndex = 4
+      ElseIf ws.Range("J" & Summary - 1).Value <= 0 Then
+      ws.Range("J" & Summary - 1).Interior.ColorIndex = 3
+      End If
+        
+            
+        End If
+        
+    
+    Next i
+    
+    Next ws
+
+End Sub
+
